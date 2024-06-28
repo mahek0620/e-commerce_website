@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import './footer.css';
+
+import { useScrollToTop } from 'react-scroll-to-top';
 
 import Icon1 from '../../assets/images/icon-1.svg';
 import Icon2 from '../../assets/images/icon-2.svg';
@@ -25,18 +27,45 @@ import Newsletter from '../../components/newsletter/index';
 import NewsletterImg from '../../assets/images/newsletter.webp';
 
 const Footer = () => {
+  const scrollToBottomRef = useRef(null);
+  const [showScrollBottomButton, setShowScrollBottomButton] = useState(false);
+
+  // Function to scroll to bottom
+  const scrollToBottom = () => {
+    if (scrollToBottomRef.current) {
+      scrollToBottomRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end'
+      });
+      setShowScrollBottomButton(false); // Hide the button after clicking
+    }
+  };
+  const handleScroll = () => {
+    const scrollPosition = window.scrollY;
+    if (scrollPosition > 200) {
+      setShowScrollBottomButton(true);
+    } else {
+      setShowScrollBottomButton(false);
+    }
+  };
+
+  // Attach scroll event listener
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   const currentYear = new Date().getFullYear();
   const location = `5171 W Campbell Ave undefined Kent, Utah 53127 United States`;
   const FooterData = [
     {
       title: 'Company',
       data: [
-        { link: '#', text: 'About Us' },
+        { link: '/AboutUs', text: 'About Us' },
         { link: '#', text: 'Delivery Information' },
         { link: '/privacy-policy', text: 'Privacy Policy' },
         { link: '/termsandconditions', text: 'Terms & Conditions' },
         { link: '#', text: 'Contact Us' },
-        { link: '#', text: 'Support Center' },
+        { link: '/faq', text: 'FAQ' },
         { link: '#', text: 'Careers' },
         { link: '#', text: 'Contributors' }
       ]
@@ -44,7 +73,7 @@ const Footer = () => {
     {
       title: 'Corporate',
       data: [
-        { link: '#', title: 'About Us' },
+        { link: '/AboutUs', title: 'About Us' },
         { link: '#', title: 'Delivery Information' },
         { link: '/privacy-policy', text: 'Privacy Policy' },
         { link: '/termsandconditions', text: 'Terms & Conditions' },
@@ -57,7 +86,7 @@ const Footer = () => {
     {
       title: 'Popular',
       data: [
-        { link: '#', text: 'About Us' },
+        { link: '/AboutUs', text: 'About Us' },
         { link: '#', text: 'Delivery Information' },
         { link: '/privacy-policy', text: 'Privacy Policy' },
         { link: '/termsandconditions', text: 'Terms & Conditions' },
@@ -148,7 +177,7 @@ const Footer = () => {
                 <h4>Awesome grocery store website template🍊🥝 </h4>
                 <br />
 
-                <h6
+                <h5
                   style={{ cursor: 'pointer' }}
                   onClick={() =>
                     window.open(
@@ -158,30 +187,29 @@ const Footer = () => {
                   }
                 >
                   <LocationOnOutlinedIcon />
-                  <strong>🏠 Address : </strong>: {location}
-                </h6>
-                <h6
+                  <strong>Address : </strong> {location}
+                </h5>
+                <h5
                   className="mail-tel"
                   onClick={() => (window.location = 'tel: +91 540-025-124553')}
                 >
-                  <HeadphonesOutlinedIcon /> <strong>☏ Call Us : </strong> (+91)
+                  <HeadphonesOutlinedIcon /> <strong> Call Us : </strong> (+91)
                   - 540-025-124553{' '}
-                </h6>
-                <h6
+                </h5>
+                <h5
                   className="mail-tel"
                   onClick={() => (window.location = 'mailto:sale@Nest.com')}
                 >
-                  <EmailOutlinedIcon /> <strong>✉ Email : </strong>{' '}
-                  sale@Nest.com
-                </h6>
-                <h6>
+                  <EmailOutlinedIcon /> <strong> Email : </strong> sale@Nest.com
+                </h5>
+                <h5>
                   <WatchLaterOutlinedIcon />
-                  <strong>🕛 Hours : </strong> 10:00 - 18:00, Mon - Sat
-                </h6>
+                  <strong> Hours : </strong> 10:00 - 18:00, Mon - Sat
+                </h5>
               </div>
 
               <div className="col-md-6 part2">
-                <div className="row">
+                <div className="footer-grid">
                   {FooterData.map((item, index) => (
                     <div key={index} className="col">
                       <h3>{item.title}</h3>
@@ -243,7 +271,7 @@ const Footer = () => {
 
               <div className="col-md-4 part3 part_3">
                 <div className="d-flex align-items-center">
-                  <h4>Follow Us</h4>
+                  <h4 className="m-0">Follow Us</h4>
                   <ul className="follow list list-inline d-inline">
                     {SocialMedia.map((item, index) => (
                       <li key={index} className="list-inline-item">
@@ -256,6 +284,13 @@ const Footer = () => {
             </div>
           </div>
         </footer>
+        {/* Scroll down button */}
+        <button className="scroll-down-btn" onClick={scrollToBottom}>
+          ↓
+        </button>
+
+        {/* Ref element for scrolling to bottom */}
+        <div ref={scrollToBottomRef} />
       </div>
     </>
   );
